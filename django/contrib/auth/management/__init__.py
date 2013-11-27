@@ -77,7 +77,11 @@ def create_permissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kw
     searched_perms = list()
     # The codenames and ctypes that should exist.
     ctypes = set()
-    for klass in app_models:
+    ctypes_for_models = ContentType.objects.get_for_models(
+        *app_models,
+        for_concrete_models=False
+    )
+    for klass, ctype in ctypes_for_models.iteritems():
         # Force looking up the content types in the current database
         # before creating foreign keys to them.
         ctype = ContentType.objects.db_manager(db).get_for_model(klass)
